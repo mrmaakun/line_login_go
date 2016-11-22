@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+	<div class="container-fluid">
+<h2><p class="text-left">Profile Information</p></h2>
+<div class="row">
+ <div class="col-md-4"><h3>{{.DisplayName}}</h3></div>
+  <div class="col-md-4"><h3></div>
+  <div class="col-md-4"></div>
+    
+</div>
+<div class="row">
+ <div class="col-md-4"><img src="{{.ProfilePicture}}/large" alt="Profile Picture" height="200" width="200"></div>
+  <div class="col-md-4">
+</div>
+  <div class="col-md-4"></div>
+</div>
+<div class="row">
+<table class="table table-hover">
+  <tbody>
+        <tr>
+      <th scope="row">Mid</th>
+      <td>{{.Mid}}</td>
+    </tr>
+    <tr>
+      <th scope="row">What's up message</th>
+      <td>{{.ProfileMessage}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2><p class="text-left">Login Information</p></h2>
+<div class="row">
+<table class="table table-hover">
+  <tbody>
+    <tr>
+      <th scope="row">Access Token</th>
+      <td>{{.AccessToken}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Refresh Token</th>
+      <td>{{.RefreshToken}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Expiry</th>
+      <td>{{.Expiry}}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="row">
+  <div class="col-md-3">
+  <p class="text-center"><button type="button" class="btn btn-success">Refresh Token</button></p>
+  </div>
+  <div class="col-md-3"><p class="text-center"><button type="button" class="btn btn-success" data-toggle="modal" data-target="localhost:12345/login">Verify Token</button></p></div>
+  <div class="col-md-3"><p class="text-center"><button type="button" class="btn btn-success">Send Message</button></p>
+</div>
+    <div class="col-md-3">
+  <a href="{{.LogoutLink}}" class="btn btn-danger" role="button">Logout</a>
+</div>
+
+</div>
+
+  </div>
+
+  </body>
+
+</html>
+
+
+
+
