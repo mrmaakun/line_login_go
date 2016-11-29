@@ -20,6 +20,7 @@ type ProfileInfo struct {
 type APICredentials struct {
 	AccessToken  string
 	RefreshToken string
+	Expire       int64
 }
 
 type RefreshResponse struct {
@@ -27,16 +28,32 @@ type RefreshResponse struct {
 	AccessToken      string `json:"accessToken,omitempty"`
 	RefreshToken     string `json:"refreshToken,omitempty"`
 	Expire           int64  `json:"expire,omitempty"`
-	Error            string `json:"error"`
-	ErrorDescription string `json:"error_descrition"`
+	Error            string `json:"error,omitempty"`
+	ErrorDescription string `json:"error_descrition,omitempty"`
 }
 
 type VerifyResponse struct {
 	Mid              string `json:"mid,omitempty"`
 	ChannelId        int64  `json:"channelId,omitempty"`
 	Expire           int64  `json:"expire,omitempty"`
-	Error            string `json:"error"`
-	ErrorDescription string `json:"error_descrition"`
+	Error            string `json:"error,omitempty"`
+	ErrorDescription string `json:"error_descrition,omitempty"`
+}
+
+type MessageTextParameters struct {
+	UserName string `json:"user_name,omitempty"`
+}
+
+type MessageContent struct {
+	To        []string `json:"to,omitempty"`
+	ToChannel string   `json:"toChannel,omitempty"`
+	EventType string   `json:"eventType,omitempty"`
+}
+
+type MessageRequest struct {
+	To        []string `json:"to,omitempty"`
+	ToChannel string   `json:"toChannel,omitempty"`
+	EventType string   `json:"eventType,omitempty"`
 }
 
 func LineLogout() {
@@ -75,9 +92,14 @@ func RefreshAccessToken(credentials APICredentials) error {
 
 	urlStr := os.Getenv("LINE_API_BASE_URL") + "/oauth/accessToken"
 
-	req, err := http.NewRequest("POST", urlStr, nil)
+	log.Println("Refresh Token to be used: " + credentials.RefreshToken)
+	log.Println("Access Token to be used: " + credentials.AccessToken)
 
-	req.Header.Add("Content-Type", "x-www-form-urlencoded")
+	req, err := http.NewRequest("POST", urlStr+"?"+data.Encode(), nil)
+
+	log.Println("request: " + req.URL.String())
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("X-Line-ChannelToken", credentials.AccessToken)
 
 	resp, err := client.Do(req)
@@ -90,16 +112,29 @@ func RefreshAccessToken(credentials APICredentials) error {
 
 	json.NewDecoder(resp.Body).Decode(&refreshResponse)
 
+	log.Println("Access Token from Response: " + refreshResponse.AccessToken)
+	log.Println("Refresh Token from Response: " + refreshResponse.RefreshToken)
+
+	log.Println("Expire from Response: ", refreshResponse.Expire)
+
+	log.Println("Error: " + refreshResponse.Error)
+
 	newCredentials := APICredentials{}
 
-	if refreshResponse.Error != "" {
+	if refreshResponse.Error == "" {
 
 		newCredentials.AccessToken = refreshResponse.AccessToken
 		newCredentials.RefreshToken = refreshResponse.RefreshToken
+		newCredentials.Expire = refreshResponse.Expire
 
+		WriteCredentials(newCredentials)
+
+		// If there are no errors, refresh the credentials in Redis
 		return nil
 
 	} else {
+
+		log.Println("Error in refreshresponse: " + refreshResponse.AccessToken)
 
 		returnError := APIError{
 			ErrorCode:        refreshResponse.Error,
@@ -108,10 +143,6 @@ func RefreshAccessToken(credentials APICredentials) error {
 
 		return returnError
 	}
-
-	// If there are no errors, refresh the credentials in Redis
-
-	WriteCredentials(newCredentials)
 
 	return err
 
@@ -218,5 +249,13 @@ func GetProfile() (ProfileInfo, error) {
 	json.NewDecoder(resp.Body).Decode(&profileInfo)
 
 	return profileInfo, nil
+
+}
+
+func SendLinkMessage(mid string, username string) {
+
+	//credentials := GetCredentials()
+
+	log.Println("Entered SendMessage")
 
 }

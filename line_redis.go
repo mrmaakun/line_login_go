@@ -3,6 +3,7 @@ package main
 import (
 	"gopkg.in/redis.v5"
 	"log"
+	"strconv"
 )
 
 // This file is using go-redis: https://github.com/go-redis/redis
@@ -33,6 +34,12 @@ func WriteCredentials(credentials APICredentials) {
 	}
 
 	err = client.Set("line_refresh_token", credentials.RefreshToken, 0).Err()
+
+	if err != nil {
+		panic(err)
+	}
+
+	err = client.Set("line_token_expire", strconv.FormatInt(credentials.Expire, 10), 0).Err()
 
 	if err != nil {
 		panic(err)
@@ -74,9 +81,20 @@ func GetCredentials() APICredentials {
 		panic(err)
 	}
 
+	expire, err := client.Get("line_token_expire").Result()
+	if err == redis.Nil {
+		// set refreshToken to empty string if it doesn't exist
+		expire = "0"
+	} else if err != nil {
+		panic(err)
+	}
+
+	expireInt, _ := strconv.Atoi(expire)
+
 	returnCredentials := APICredentials{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		Expire:       int64(expireInt),
 	}
 
 	return returnCredentials
@@ -107,6 +125,11 @@ func ClearCredentials() {
 	}
 
 	// Delete the refresh token
+
+	err = client.Del("line_token_expire").Err()
+	if err != nil {
+		panic(err)
+	}
 
 	err = client.Del("line_refresh_token").Err()
 	if err != nil {

@@ -26,6 +26,8 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 
 	loginModel := LoginModel{LoginUrl: loginUrl}
 
+	log.Println("Login URL: " + loginModel.LoginUrl)
+
 	t, _ := template.ParseFiles("templates/login.html")
 	t.Execute(w, &loginModel)
 
@@ -37,8 +39,11 @@ func main() {
 	http.HandleFunc("/login", LoginPage)
 	http.HandleFunc("/postlogin", PostLogin)
 	http.HandleFunc("/logout", Logout)
+	http.HandleFunc("/verify", VerifyToken)
+	http.HandleFunc("/refresh", RefreshToken)
+	http.HandleFunc("/message", Message)
 
-	http.HandleFunc("/", LoginPage)
+	http.Handle("/", http.FileServer(http.Dir("./web")))
 
 	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 

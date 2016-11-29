@@ -33,6 +33,10 @@ type GetAccessTokenResponse struct {
 	ErrorDescription string `json:"error_desciption"` //This is a json format bug. Description is mispelleld
 }
 
+type ModalModel struct {
+	TokenIsValid bool
+}
+
 func GetAccessToken(authorizationCode string) GetAccessTokenResponse {
 
 	log.Println("Entered GetAccessToken")
@@ -83,6 +87,66 @@ func GetAccessToken(authorizationCode string) GetAccessTokenResponse {
 	}
 
 	return accessTokenResponse
+
+}
+
+// Change modal that appears when the user clicks the "Verify Token" modal
+// depending on whether the token is valid or not
+
+func VerifyToken(w http.ResponseWriter, r *http.Request) {
+
+	model := ModalModel{TokenIsValid: false}
+
+	credentials := GetCredentials()
+
+	err := VerifyCredentials(credentials)
+
+	if err == nil {
+
+		model.TokenIsValid = true
+
+	}
+
+	log.Println("Token Model: ", model.TokenIsValid)
+
+	t, _ := template.ParseFiles("templates/verify.html")
+	t.Execute(w, &model)
+
+}
+
+func RefreshToken(w http.ResponseWriter, r *http.Request) {
+
+	err := RefreshAccessToken(GetCredentials())
+
+	if err != nil {
+		panic(err)
+	}
+
+	//Get New Credentials
+
+	credentials := GetCredentials()
+
+	model := PostLoginModel{AccessToken: credentials.AccessToken, RefreshToken: credentials.RefreshToken, Expiry: credentials.Expire}
+
+	t, _ := template.ParseFiles("templates/refresh.html")
+	t.Execute(w, &model)
+
+}
+
+func Message(w http.ResponseWriter, r *http.Request) {
+
+	// Get Profile info for user name
+	profile, err := GetProfile()
+
+	if err != nil {
+		panic(err)
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+
+	log.Println(string(body))
+
+	SendLinkMessage("12312312", profile.DisplayName)
 
 }
 

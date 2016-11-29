@@ -3,14 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
     <!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-	<!-- jQuery library -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
-	<!-- Latest compiled JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
   <body>
 
@@ -44,29 +45,30 @@
 </div>
 <h2><p class="text-left">Login Information</p></h2>
 <div class="row">
-<table class="table table-hover">
+<table id="LoginInformation" class="table table-hover">
   <tbody>
     <tr>
       <th scope="row">Access Token</th>
-      <td>{{.AccessToken}}</td>
+      <td id="AccessToken">{{.AccessToken}}</td>
     </tr>
     <tr>
       <th scope="row">Refresh Token</th>
-      <td>{{.RefreshToken}}</td>
+      <td id="RefreshToken">{{.RefreshToken}}</td>
     </tr>
     <tr>
       <th scope="row">Expiry</th>
-      <td>{{.Expiry}}</td>
+      <td id="Expiry">{{.Expiry}}</td>
     </tr>
   </tbody>
 </table>
 </div>
 <div class="row">
   <div class="col-md-3">
-  <p class="text-center"><button type="button" class="btn btn-success">Refresh Token</button></p>
+  <p class="text-center"><button type="button" id="refreshButton" class="btn btn-success" data-toggle="modal" data-target="#refreshModal">Refresh Token</button></p>
   </div>
-  <div class="col-md-3"><p class="text-center"><button type="button" class="btn btn-success" data-toggle="modal" data-target="localhost:12345/login">Verify Token</button></p></div>
-  <div class="col-md-3"><p class="text-center"><button type="button" class="btn btn-success">Send Message</button></p>
+  <div class="col-md-3"><p class="text-center"><button type="button" id="verifyButton" class="btn btn-success" data-toggle="modal" data-target="#verifyModal">Verify Token</button></p></div>
+
+  <div class="col-md-3"><p class="text-center"><button type="button" class="btn btn-success" data-toggle="modal" data-target="#messageModal">Send Message</button></p>
 </div>
     <div class="col-md-3">
   <a href="{{.LogoutLink}}" class="btn btn-danger" role="button">Logout</a>
@@ -75,6 +77,83 @@
 </div>
 
   </div>
+
+<!-- Modal -->
+<div id="verifyModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" id="verify-modal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Modal Header</h4>
+      </div>
+      <div class="modal-body">
+        <p>Some text in the modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Refresh Modal -->
+<div id="refreshModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Token Refresh</h4>
+      </div>
+      <div class="modal-body">
+        <p>Your token has been refreshed.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Message Modal -->
+<div id="messageModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Send Message</h4>
+      </div>
+      <div class="modal-body">
+        <form id="testform">
+          <div class="form-group">
+            <label for="mid">MID of Target User:</label>
+            <input type="text" class="form-control" id="mid">
+          </div>
+          <button type="button" id="send-message-button" class="btn btn-default">Send</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+      <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="js/modal.js"></script>
 
   </body>
 
